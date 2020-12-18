@@ -57,8 +57,7 @@
 
 
 # Event Storming 모델
- ![image](https://user-images.githubusercontent.com/487999/79684144-2a893200-826a-11ea-9a01-79927d3a0107.png)
-
+ ![image](https://user-images.githubusercontent.com/62786155/102586711-fd20bb00-414d-11eb-96ed-a0f82c44571c.PNG)
 
 
 # 체크포인트
