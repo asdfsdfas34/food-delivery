@@ -262,25 +262,25 @@ siege -c100 -t60S -r10 -v --content-type "application/json" 'http://gateway:8080
 ## Autoscale 점검
 ### 설정 확인
 ```
-application.yaml 파일 설정 변경
-(https://k8s.io/examples/application/php-apache.yaml 파일 참고)
- resources:
-  limits:
-    cpu: 500m
-  requests:
-    cpu: 200m
+     resources:
+            requests:
+              cpu: 1000m
+              memory: 256Mi
+            limits:
+              cpu: 2500m
+              memory: 512Mi
 ```
 ### 점검 순서
 ```
 1. HPA 생성 및 설정
-	kubectl autoscale deploy bookinventory --min=1 --max=10 --cpu-percent=30
-	kubectl get hpa bookinventory -o yaml
+	kubectl autoscale deployment order --cpu-percent=10 --min=1 --max=10
 2. 모니터링 걸어놓고 확인
-	kubectl get hpa bookinventory -w
+	kubectl get hpa order -w
 	watch kubectl get deploy,po
 3. Siege 실행
-  siege -c10 -t60S -v http://gateway:8080/books/
+       siege -c100 -t60S -v 'http://order:8080/orders'
 ```
+
 ### 점검 결과
 ![Alt text](images/HPA_test.PNG?raw=true "Optional Title")
 
