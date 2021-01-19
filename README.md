@@ -238,20 +238,22 @@ transfer-encoding: chunked
 
 ## Circuit Breaker 점검
 
-```
-Hystrix Command
-	5000ms 이상 Timeout 발생 시 CircuitBearker 발동
-
-CircuitBeaker 발생
-	http http://delivery:8080/selectDeliveryInfo?deliveryId=1
-		- 잘못된 쿼리 수행 시 CircuitBeaker
-		- 10000ms(10sec) Sleep 수행
-		- 5000ms Timeout으로 CircuitBeaker 발동
-		- 10000ms(10sec) 
-```
+### Readiness 와 Liveness 제외후 Order 서비스 재생성
 
 ```
-실행 결과
+kubectl delete deploy order
+kubectl apply -f deployment2.yml 
+```
+### 부하발생
+
+```
+Kubectl exec –it siege -- /bin/bash
+siege -c100 -t60S -r10 -v --content-type "application/json" 'http://gateway:8080/orders POST {"qty": 50, "foodcaltalogid":1 , "customerid":2 }'
+
+```
+
+
+### 실행결과
 
 root@httpie:/# http http://delivery:8080/selectDeliveryInfo?deliveryId=1
 HTTP/1.1 200 
