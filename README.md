@@ -310,11 +310,11 @@ siege -c100 -t60S -v 'http://order:8080/orders'
   kubectl set image deployment order order=final05crg.azurecr.io/order:latest
 ```
 
-#### 4. Pod 모니터링
+#### 3. Pod 모니터링
 ![image](https://user-images.githubusercontent.com/62786155/105107327-3fe20400-5afb-11eb-9b16-7fefba20c270.png)
 
 
-#### 3. Siege 결과 Availability 확인(100%)
+#### 4. Siege 결과 Availability 확인(100%)
 
 ![image](https://user-images.githubusercontent.com/62786155/105107324-3e184080-5afb-11eb-935f-a35d85be1624.png)
 
