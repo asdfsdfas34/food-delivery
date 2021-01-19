@@ -183,98 +183,18 @@ transfer-encoding: chunked
 }
 ```
 
-### 주문 준비
+### 주문 취소
 ```
-root@httpie:/# http POST http://gateway:8080/stockInputs bookId=1 quantity=200
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Date: Wed, 09 Sep 2020 02:47:04 GMT
-transfer-encoding: chunked
-
-{
-    "bookId": 1, 
-    "id": 8, 
-    "inCharger": null, 
-    "quantity": 200
-}
-```
-```
-{"eventType":"DeliveryPrepared","timestamp":"20200909024704","id":null,"orderId":4,"status":"Delivery_Prepared","me":true}
-{"eventType":"DeliveryStatusChanged","timestamp":"20200909024704","id":4,"orderId":4,"deliveryStatus":"Shipped","me":true}
-```
-##### 재고 수량 변경 확인 결과
-```
-root@httpie:/# http http://gateway:8080/books/1 
-HTTP/1.1 200 OK
-Content-Type: application/hal+json;charset=UTF-8
-Date: Wed, 09 Sep 2020 02:53:26 GMT
-transfer-encoding: chunked
-{
-    "_links": {
-        "book": {
-            "href": "http://bookinventory:8080/books/1"
-        }, 
-        "self": {
-            "href": "http://bookinventory:8080/books/1"
-        }
-    }, 
-    "bookName": "alice in a wonderland", 
-    "stock": 150
-}
+$ http DELETE http://gateway:8080/orders/46
 ```
 
-##### 주문 상태 변경 확인 결과
+##### Delivery 취소, 주문취소, Payment 취소 메시지 전송
 ```
-root@httpie:/# http http://gateway:8080/orders/4
-HTTP/1.1 200 OK
-Content-Type: application/hal+json;charset=UTF-8
-Date: Wed, 09 Sep 2020 02:55:30 GMT
-transfer-encoding: chunked
-
-{
-    "_links": {
-        "order": {
-            "href": "http://order:8080/orders/4"
-        }, 
-        "self": {
-            "href": "http://order:8080/orders/4"
-        }
-    }, 
-    "bookId": 1, 
-    "customerId": 2, 
-    "deliveryAddress": "incheon si", 
-    "orderStatus": "Shipped", 
-    "quantity": 100
-}
-
-root@httpie:/# http http://gateway:8080/deliverables/5
-HTTP/1.1 200 OK
-Content-Type: application/hal+json;charset=UTF-8
-Date: Wed, 09 Sep 2020 02:55:07 GMT
-transfer-encoding: chunked
-
-{
-    "_links": {
-        "deliverable": {
-            "href": "http://bookinventory:8080/deliverables/5"
-        }, 
-        "self": {
-            "href": "http://bookinventory:8080/deliverables/5"
-        }
-    }, 
-    "orderId": 3, 
-    "quantity": 100, 
-    "status": "Delivery_Prepared"
-}
+{"eventType":"DeliveryCanceled","timestamp":"20210119203304","id":1171,"status":"Cancelled-delivery","orderId":46,"me":true}
+{"eventType":"OrderCancelled","timestamp":"20210119203304","id":46,"qty":50,"status":＂Order Canceled","foodcaltalogid":1,"customerid":2,"me":true}
+{"eventType":"Cancelled","timestamp":"20210119203304","id":46,"amout":50,"status":"Order Canceled-payment","orderid":75,"me":true}
 ```
 
-### 배송 상태 변경
-```
-```
-
-### 고객 Mypage 이력 확인
-```
-```
 
 ### 장애 격리
 ```
