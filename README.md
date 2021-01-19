@@ -289,116 +289,32 @@ siege -c100 -t60S -r10 -v --content-type "application/json" 'http://gateway:8080
 ## Readiness Probe 점검
 ### 설정 확인
 ```
-readinessProbe:
-  httpGet:
-    path: '/orders'
-    port: 8080
-  initialDelaySeconds: 12
-  timeoutSeconds: 2
-  periodSeconds: 5
-  failureThreshold: 10
+   readinessProbe:
+      	    httpGet:
+              path: '/orders'
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 10
+
 ```
 ### 점검 순서
 #### 1. Siege 실행
 ```
-siege -c2 -t120S  -v 'http://gateway:8080/orders
+siege -c100 -t60S -v 'http://order:8080/orders'
 ```
-#### 2. Readiness 설정 제거 후 배포
-#### 3. Siege 결과 Availability 확인(100% 미만)
-```
-Lifting the server siege...      done.
+#### 2. Order 이미지 교체
 
-Transactions:                    330 hits
-Availability:                  70.82 %
-Elapsed time:                 119.92 secs
-Data transferred:               0.13 MB
-Response time:                  0.02 secs
-Transaction rate:               2.75 trans/sec
-Throughput:                     0.00 MB/sec
-Concurrency:                    0.07
-Successful transactions:         330
-Failed transactions:             136
-Longest transaction:            1.75
-Shortest transaction:           0.00
 ```
-#### 4. Readiness 설정 추가 후 배포
-
-#### 6. Siege 결과 Availability 확인(100%)
-```
-Lifting the server siege...      done.
-
-Transactions:                    443 hits
-Availability:                 100.00 %
-Elapsed time:                 119.60 secs
-Data transferred:               0.51 MB
-Response time:                  0.01 secs
-Transaction rate:               3.70 trans/sec
-Throughput:                     0.00 MB/sec
-Concurrency:                    0.04
-Successful transactions:         443
-Failed transactions:               0
-Longest transaction:            0.18
-Shortest transaction:           0.00
- 
-FILE: /var/log/siege.log
+  kubectl set image deployment order order=final05crg.azurecr.io/order:latest
 ```
 
-## Liveness Probe 점검
-### 설정 확인
-```
-livenessProbe:
-  httpGet:
-    path: '/isHealthy'
-    port: 8080
-  initialDelaySeconds: 120
-  timeoutSeconds: 2
-  periodSeconds: 5
-  failureThreshold: 5
-```
-### 점검 순서 및 결과
-#### 1. 기동 확인
-```
-http http://gateway:8080/orders
-```
-#### 2. 상태 확인
-```
-oot@httpie:/# http http://order:8080/isHealthy
-HTTP/1.1 200 
-Content-Length: 0
-Date: Wed, 09 Sep 2020 02:14:22 GMT
-```
+#### 4. Pod 모니터링
+![image](https://user-images.githubusercontent.com/62786155/105107327-3fe20400-5afb-11eb-9b16-7fefba20c270.png)
 
-#### 3. 상태 변경
-```
-root@httpie:/# http http://order:8080/makeZombie
-HTTP/1.1 200 
-Content-Length: 0
-Date: Wed, 09 Sep 2020 02:14:24 GMT
-```
-#### 4. 상태 확인
-```
-root@httpie:/# http http://order:8080/isHealthy
-HTTP/1.1 500 
-Connection: close
-Content-Type: application/json;charset=UTF-8
-Date: Wed, 09 Sep 2020 02:14:28 GMT
-Transfer-Encoding: chunked
 
-{
-    "error": "Internal Server Error", 
-    "message": "zombie.....", 
-    "path": "/isHealthy", 
-    "status": 500, 
-    "timestamp": "2020-09-09T02:14:28.338+0000"
-}
-```
-#### 5. Pod 재기동 확인
-```
-root@httpie:/# http http://order:8080/isHealthy
-http: error: ConnectionError: HTTPConnectionPool(host='order', port=8080): Max retries exceeded with url: /makeZombie (Caused by NewConnectionError('<requests.packages.urllib3.connection.HTTPConnection object at 0x7f5196111c50>: Failed to establish a new connection: [Errno 111] Connection refused',))
+#### 3. Siege 결과 Availability 확인(100%)
 
-root@httpie:/# http http://order:8080/isHealthy
-HTTP/1.1 200 
-Content-Length: 0
-Date: Wed, 09 Sep 2020 02:36:00 GMT
-```
+![image](https://user-images.githubusercontent.com/62786155/105107324-3e184080-5afb-11eb-935f-a35d85be1624.png)
+
