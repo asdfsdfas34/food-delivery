@@ -65,7 +65,7 @@ http POST http://gateway:8080/customers name=kim phone=011 address=busan age=35
 
 ### FoodCatalog 정보 생성
 ```
-$ http POST http://gateway:8080/foodCatalogs name=pizza stock=100 price=1000             
+# http POST http://gateway:8080/foodCatalogs name=pizza stock=100 price=1000             
 
 HTTP/1.1 201 Created
 Content-Type: application/json;charset=UTF-8
@@ -122,9 +122,9 @@ http POST http://gateway:8080/orders qty=20 foodcaltalogid=1 customerid=1
 {"eventType":"Ordered","timestamp":"20210119130159","id":3,"qty":20,"status":null,"foodcaltalogid":1,"customerid":1,"me":true}
 ```
 
-##### Deliveriy 확인 결과
+##### Delivery 확인 결과
 ```
-$ http http://gateway:8080/deliveries
+# http http://gateway:8080/deliveries
 
 HTTP/1.1 200 OK
 Content-Type: application/hal+json;charset=UTF-8
@@ -153,7 +153,7 @@ transfer-encoding: chunked
 
 ##### MyOrder 조회 (CQRS)
 ```
-$ http http://gateway:8080/myOrders
+# http http://gateway:8080/myOrders
 
 Content-Type: application/hal+json;charset=UTF-8
 Date: Tue, 19 Jan 2021 12:48:28 GMT
@@ -185,7 +185,7 @@ transfer-encoding: chunked
 
 ### 주문 취소
 ```
-$ http DELETE http://gateway:8080/orders/46
+# http DELETE http://gateway:8080/orders/46
 ```
 
 ##### Delivery 취소, 주문취소, Payment 취소 메시지 전송
@@ -198,34 +198,40 @@ $ http DELETE http://gateway:8080/orders/46
 
 ### 장애 격리
 ```
-1. Customer 서비스 중지
-	kubectl delete deploy customer
+1. Delivery 서비스 중지
+	kubectl delete deploy delivery
 	
 2. 주문 생성
-	root@httpie:/# http POST http://gateway:8080/orders bookId=1 customerId=1 deliveryAddress="bundang gu" quantity=50
+	# http POST http://gateway:8080/orders qty=35 foodcaltalogid=2 customerid=2
 
 3. 주문 생성 결과 확인
+
 HTTP/1.1 201 Created
 Content-Type: application/json;charset=UTF-8
-Date: Wed, 09 Sep 2020 02:00:35 GMT
-Location: http://order:8080/orders/1
+Date: Tue, 19 Jan 2021 20:53:43 GMT
+Location: http://order:8080/orders/1375
 transfer-encoding: chunked
 
 {
     "_links": {
         "order": {
-            "href": "http://order:8080/orders/1"
-        }, 
+            "href": "http://order:8080/orders/1375"
+        },
         "self": {
-            "href": "http://order:8080/orders/1"
+            "href": "http://order:8080/orders/1375"
         }
-    }, 
-    "bookId": 1, 
-    "customerId": 1, 
-    "deliveryAddress": "bundang gu", 
-    "orderStatus": "Customer_Not_Verified", 
-    "quantity": 50
+    },
+    "customerid": 2,
+    "foodcaltalogid": 2,
+    "qty": 35,
+    "status": null
 }
+
+4. Delivery 서비스 재성후 Shipped 메시지 정상 전송확인
+	
+	/gmfd/delivery/kubernetes$ kubectl apply -f deployment.yml
+
+{"eventType":"Shipped","timestamp":"20210119205555","id":1,"status":"Delivery Start","orderId":1375,"me":true}
 ```
 
 ## CI/CD 점검
