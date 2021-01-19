@@ -40,7 +40,7 @@
 ### 모든 서비스 정상 기동 
 ```
 * Httpie Pod 접속
-kubectl exec -it httpie -- bash
+kubectl exec -it siege -- /bin/bash
 
 * API 
 http http://gateway:8080/orders
@@ -88,7 +88,8 @@ transfer-encoding: chunked
 } 
 
 
-http POST http://gateway:8080/foodCatalogs name=meat stock=100 price=2000
+$ http POST http://gateway:8080/foodCatalogs name=meat stock=100 price=2000
+
 HTTP/1.1 201 Created
 Content-Type: application/json;charset=UTF-8
 Date: Tue, 19 Jan 2021 10:53:52 GMT
@@ -113,50 +114,73 @@ transfer-encoding: chunked
 
 ### 주문 생성
 ```
-http POST http://gateway:8080/orders bookId=1 customerId=1 deliveryAddress="bundang gu" quantity=50
-http POST http://gateway:8080/orders bookId=1 customerId=2 deliveryAddress="incheon si" quantity=100
+http POST http://gateway:8080/orders qty=20 foodcaltalogid=1 customerid=1
 ```
 
 ##### Message 전송 확인 결과
 ```
-{"eventType":"Ordered","timestamp":"20200909024119","orderId":4,"bookId":1,"customerId":2,"quantity":100,"deliveryAddress":"incheon si","orderStatus":"ORDERED","me":true}
+{"eventType":"Ordered","timestamp":"20210119130159","id":3,"qty":20,"status":null,"foodcaltalogid":1,"customerid":1,"me":true}
 ```
 
 ##### Deliveriy 확인 결과
 ```
-root@httpie:/# http http://gateway:8080/deliveraries
+$ http http://gateway:8080/deliveries
+
+HTTP/1.1 200 OK
+Content-Type: application/hal+json;charset=UTF-8
+Date: Tue, 19 Jan 2021 13:04:21 GMT
+transfer-encoding: chunked
+
 {
-    "_links": {
-        "delivery": {
-            "href": "http://delivery:8080/deliveries/4"
-        }, 
-        "self": {
-            "href": "http://delivery:8080/deliveries/4"
-        }
-    }, 
-    "deliveryAddress": "incheon si", 
-    "deliveryStatus": "CreateDelivery", 
-    "orderId": 4
-}
-
-```
-
-##### Deliverables 확인 결과
-```
-root@httpie:/# http http://gateway:8080/deliverables
-           {
+    "_embedded": {
+        "deliveries": [
+         {
                 "_links": {
-                    "deliverable": {
-                        "href": "http://bookinventory:8080/deliverables/5"
-                    }, 
+                    "delivery": {
+                        "href": "http://delivery:8080/deliveries/4"
+                    },
                     "self": {
-                        "href": "http://bookinventory:8080/deliverables/5"
+                        "href": "http://delivery:8080/deliveries/4"
                     }
-                }, 
-                "orderId": 4, 
-                "quantity": 100, 
-                "status": "Stock_Lacked"
+                },
+                "orderId": 3,
+                "status": "Ordered"
             }
+        ]
+    } 
+}
+```
+
+##### MyOrder 조회 (CQRS)
+```
+$ http http://gateway:8080/myOrders
+
+Content-Type: application/hal+json;charset=UTF-8
+Date: Tue, 19 Jan 2021 12:48:28 GMT
+transfer-encoding: chunked
+
+{
+    "_embedded": {
+        "myOrders": [
+ {
+                "_links": {
+                    "myOrder": {
+                        "href": "http://customer:8080/myOrders/5"
+                    },
+                    "self": {
+                        "href": "http://customer:8080/myOrders/5"
+                    }
+                },
+                "customerid": 1,
+                "deliveryid": 3,
+                "foodcatlogid": 1,
+                "orderid": 3,
+                "qty": 20,
+                "status": “Delivery Start”
+            }
+        ]
+    }
+}
 ```
 
 ### 주문 준비
