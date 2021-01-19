@@ -63,47 +63,51 @@ http POST http://gateway:8080/customers name=lee phone=010 address=seoul age=29
 http POST http://gateway:8080/customers name=kim phone=011 address=busan age=35
 ```
 
-### 책 정보 생성
+### FoodCatalog 정보 생성
 ```
-$ http POST http://gateway:8080/books bookName="alice in a wonderland" stock=100
+$ http POST http://gateway:8080/foodCatalogs name=pizza stock=100 price=1000             
+
 HTTP/1.1 201 Created
 Content-Type: application/json;charset=UTF-8
-Date: Wed, 09 Sep 2020 01:53:45 GMT
-Location: http://bookinventory:8080/books/1
+Date: Tue, 19 Jan 2021 10:51:18 GMT
+Location: http://foodCatalog:8080/foodCatalogs/1
 transfer-encoding: chunked
 
 {
     "_links": {
-        "book": {
-            "href": "http://bookinventory:8080/books/1"
-        }, 
+        "foodCatalog": {
+            "href": "http://foodCatalog:8080/foodCatalogs/1"
+        },
         "self": {
-            "href": "http://bookinventory:8080/books/1"
+            "href": "http://foodCatalog:8080/foodCatalogs/1"
         }
-    }, 
-    "bookName": "alice in a wonderland", 
+    },
+    "name": "pizza",
+    "price": 1000.0,
     "stock": 100
-}
+} 
 
-$ http POST http://gateway:8080/books bookName="quobadis?" stock=50
+
+http POST http://gateway:8080/foodCatalogs name=meat stock=100 price=2000
 HTTP/1.1 201 Created
 Content-Type: application/json;charset=UTF-8
-Date: Wed, 09 Sep 2020 01:54:38 GMT
-Location: http://bookinventory:8080/books/2
+Date: Tue, 19 Jan 2021 10:53:52 GMT
+Location: http://foodCatalog:8080/foodCatalogs/2
 transfer-encoding: chunked
 
 {
     "_links": {
-        "book": {
-            "href": "http://bookinventory:8080/books/2"
-        }, 
+        "foodCatalog": {
+            "href": "http://foodCatalog:8080/foodCatalogs/2"
+        },
         "self": {
-            "href": "http://bookinventory:8080/books/2"
+            "href": "http://foodCatalog:8080/foodCatalogs/2"
         }
-    }, 
-    "bookName": "quobadis?", 
-    "stock": 50
-}
+    },
+    "name": "meat",
+    "price": 2000.0,
+    "stock": 100
+}      
 
 ```
 
