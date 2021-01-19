@@ -282,7 +282,9 @@ siege -c100 -t60S -r10 -v --content-type "application/json" 'http://gateway:8080
 ```
 
 ### 점검 결과
-![Alt text](images/HPA_test.PNG?raw=true "Optional Title")
+
+![image](https://user-images.githubusercontent.com/62786155/105106704-b8e05c00-5af9-11eb-95c2-cdeb314c4404.png)
+![image](https://user-images.githubusercontent.com/62786155/105106715-bc73e300-5af9-11eb-9d16-88f486ecab7e.png)
 
 ## Readiness Probe 점검
 ### 설정 확인
