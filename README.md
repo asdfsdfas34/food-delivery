@@ -43,24 +43,24 @@
 kubectl exec -it httpie -- bash
 
 * API 
-http http://gateway:8080/customers
-http http://gateway:8080/myPages
-http http://gateway:8080/books
-http http://gateway:8080/deliverables
-http http://gateway:8080/stockInputs
 http http://gateway:8080/orders
 http http://gateway:8080/deliveries
+http http://gateway:8080/customers
+http http://gateway:8080/myOrders
+http http://gateway:8080/pays
+http http://gateway:8080/foodCatalogs
+http http://gateway:8080/foodCatalogViews
 ```
 
 ### Kafka 기동 및 모니터링 용 Consumer 연결
 ```
-kubectl -n kafka exec -ti my-kafka-0 -- /usr/bin/kafka-console-consumer --bootstrap-server my-kafka:9092 --topic cnabookstore --from-beginning
+kubectl -n kafka exec -ti my-kafka-0 -- /usr/bin/kafka-console-consumer --bootstrap-server my-kafka:9092 --topic gmfd --from-beginning
 ```
 
 ### 고객 생성
 ```
-http POST http://gateway:8080/customers customerName="hong gil dong"
-http POST http://gateway:8080/customers customerName="bak na re"
+http POST http://gateway:8080/customers name=lee phone=010 address=seoul age=29
+http POST http://gateway:8080/customers name=kim phone=011 address=busan age=35
 ```
 
 ### 책 정보 생성
