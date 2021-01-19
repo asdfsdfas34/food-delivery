@@ -255,60 +255,9 @@ siege -c100 -t60S -r10 -v --content-type "application/json" 'http://gateway:8080
 
 ### 실행결과
 
-root@httpie:/# http http://delivery:8080/selectDeliveryInfo?deliveryId=1
-HTTP/1.1 200 
-Content-Length: 7
-Content-Type: text/plain;charset=UTF-8
-Date: Wed, 09 Sep 2020 04:27:53 GMT
+![image](https://user-images.githubusercontent.com/62786155/105106062-b29db000-5af8-11eb-80ae-90583bd49e08.png)
 
-Shipped
 
-root@httpie:/# http http://delivery:8080/selectDeliveryInfo?deliveryId=0
-HTTP/1.1 200 
-Content-Length: 17
-Content-Type: text/plain;charset=UTF-8
-Date: Wed, 09 Sep 2020 04:28:03 GMT
-
-CircuitBreaker!!!
-
-root@httpie:/# http http://delivery:8080/selectDeliveryInfo?deliveryId=1
-HTTP/1.1 200 
-Content-Length: 17
-Content-Type: text/plain;charset=UTF-8
-Date: Wed, 09 Sep 2020 04:28:06 GMT
-
-CircuitBreaker!!!
-
-```
-
-```
-소스 코드
-
-@GetMapping("/selectDeliveryInfo")
-  @HystrixCommand(fallbackMethod = "fallbackDelivery", commandProperties = {
-          @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000"),
-          @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "10000")
-  })
-  public String selectDeliveryInfo(@RequestParam long deliveryId) throws InterruptedException {
-
-   if (deliveryId <= 0) {
-    System.out.println("@@@ CircuitBreaker!!!");
-    Thread.sleep(10000);
-    //throw new RuntimeException("CircuitBreaker!!!");
-   } else {
-    Optional<Delivery> delivery = deliveryRepository.findById(deliveryId);
-    return delivery.get().getDeliveryStatus();
-   }
-
-   System.out.println("$$$ SUCCESS!!!");
-   return " SUCCESS!!!";
-  }
-
- private String fallbackDelivery(long deliveryId) {
-  System.out.println("### fallback!!!");
-  return "CircuitBreaker!!!";
- }
-```
 
 ## Autoscale 점검
 ### 설정 확인
