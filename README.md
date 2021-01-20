@@ -318,3 +318,6 @@ siege -c100 -t60S -v 'http://order:8080/orders'
 
 ![image](https://user-images.githubusercontent.com/62786155/105107324-3e184080-5afb-11eb-935f-a35d85be1624.png)
 
+#### 5. ConfigMap 적용
+
+
